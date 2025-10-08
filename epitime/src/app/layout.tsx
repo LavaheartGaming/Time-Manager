@@ -1,6 +1,6 @@
 "use client";
 
-import "./globals.css"; // ✅ active Tailwind sur toutes les pages
+import "./globals.css";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -17,7 +17,6 @@ export default function RootLayout({
   const [profilePicUrl, setProfilePicUrl] = useState<string | null>(null);
   const pathname = usePathname();
 
-  // 🔐 Vérifie la connexion utilisateur (mock)
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
@@ -29,21 +28,18 @@ export default function RootLayout({
     }
   }, []);
 
-  // 🔗 Navigation principale
   const navigation = [
     { name: "Accueil", href: "/home" },
+    { name: "Dashboard", href: "/dashboard" },
     { name: "Mes tâches", href: "/tasks" },
-    { name: "Statistiques", href: "/stats" },
-    { name: "Mon compte", href: "/profile" },
+    { name: "Mon compte", href: "/account" },
   ];
 
   return (
     <html lang="fr">
       <body className="min-h-screen flex flex-col bg-gradient-to-b from-blue-950 via-blue-900 to-indigo-900 text-white">
-        {/* --- NAVBAR --- */}
         <nav className="sticky top-0 z-50 w-full bg-blue-950/95 backdrop-blur-md border-b border-blue-800 shadow-lg">
           <div className="max-w-7xl mx-auto flex justify-between items-center h-16 px-6">
-            {/* LOGO */}
             <div className="flex items-center gap-3">
               <Image
                 src="https://cdn-icons-png.flaticon.com/512/2103/2103691.png"
@@ -60,7 +56,6 @@ export default function RootLayout({
               </Link>
             </div>
 
-            {/* --- NAV LINKS (desktop) --- */}
             <div className="hidden md:flex items-center gap-8">
               {navigation.map((item) => (
                 <Link
@@ -76,7 +71,6 @@ export default function RootLayout({
                 </Link>
               ))}
 
-              {/* PROFILE BUTTON */}
               <Link
                 href={isLoggedIn ? "/profile" : "/login"}
                 className="flex items-center justify-center h-10 w-10 rounded-full overflow-hidden bg-yellow-400 hover:bg-yellow-300 transition-all transform hover:scale-110 border border-white/20 shadow-md"
@@ -95,7 +89,6 @@ export default function RootLayout({
               </Link>
             </div>
 
-            {/* --- MENU MOBILE TOGGLE --- */}
             <div className="md:hidden">
               <button
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -106,7 +99,6 @@ export default function RootLayout({
             </div>
           </div>
 
-          {/* --- MENU MOBILE --- */}
           {isMenuOpen && (
             <div className="md:hidden bg-blue-950/95 border-t border-blue-800 p-4">
               {navigation.map((item) => (
@@ -137,24 +129,16 @@ export default function RootLayout({
           )}
         </nav>
 
-        {/* --- PAGE CONTENT --- */}
         <main className="flex-grow">{children}</main>
 
-        {/* --- FOOTER --- */}
         <footer className="bg-blue-950 border-t border-blue-800 text-center text-sm py-4 mt-10">
           <p className="text-blue-200">
             © 2025 Time Manager | Projet Étudiant Epitech |
-            <Link
-              href="/mentions-legales"
-              className="text-yellow-400 hover:underline mx-1"
-            >
+            <Link href="/mentions-legales" className="text-yellow-400 hover:underline mx-1">
               Mentions légales
             </Link>
             |
-            <Link
-              href="/confidentialite"
-              className="text-yellow-400 hover:underline mx-1"
-            >
+            <Link href="/confidentialite" className="text-yellow-400 hover:underline mx-1">
               Politique de confidentialité
             </Link>
           </p>
