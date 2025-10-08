@@ -110,11 +110,6 @@ export default function Home() {
           ))}
         </div>
       </section>
-
-      {/* Footer */}
-      <footer className="py-6 text-center text-sm text-blue-200 bg-blue-950/80">
-        © 2025 Time Manager — Epitech Project
-      </footer>
     </div>
   );
 }
