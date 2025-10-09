@@ -1,116 +1,111 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
 import {
   Clock,
   LogIn,
   LogOut,
   CheckCircle,
-  AlertTriangle,
-  Timer,
   CalendarDays,
+  User,
+  BarChart2,
 } from "lucide-react";
 
-export default function ClockPage() {
+export default function ClockDashboard() {
   const [isClockedIn, setIsClockedIn] = useState(false);
+  const [userName, setUserName] = useState("John Doe");
+  const [records, setRecords] = useState<
+    { date: string; in?: string; out?: string; total?: number }[]
+  >([]);
+  const [today] = useState(new Date().toLocaleDateString());
   const [lastAction, setLastAction] = useState<string | null>(null);
-  const [signature, setSignature] = useState("");
-  const [clockInTime, setClockInTime] = useState<Date | null>(null);
-  const [workedTime, setWorkedTime] = useState<string>("00:00:00");
-
-  // Update timer every second if user is clocked in
-  useEffect(() => {
-    let interval: NodeJS.Timeout;
-    if (isClockedIn && clockInTime) {
-      interval = setInterval(() => {
-        const diff = Date.now() - clockInTime.getTime();
-        const hours = Math.floor(diff / 3600000);
-        const minutes = Math.floor((diff % 3600000) / 60000);
-        const seconds = Math.floor((diff % 60000) / 1000);
-        setWorkedTime(
-          `${hours.toString().padStart(2, "0")}:${minutes
-            .toString()
-            .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`
-        );
-      }, 1000);
-    }
-    return () => clearInterval(interval);
-  }, [isClockedIn, clockInTime]);
 
   const handleClockIn = () => {
+    if (isClockedIn) return;
+    const time = new Date().toLocaleTimeString();
     setIsClockedIn(true);
-    const now = new Date();
-    setClockInTime(now);
-    setLastAction("Clocked in at " + now.toLocaleTimeString());
+    setLastAction(`Clocked in at ${time}`);
+    setRecords((prev) => [...prev, { date: today, in: time }]);
   };
 
   const handleClockOut = () => {
+    if (!isClockedIn) return;
+    const time = new Date().toLocaleTimeString();
     setIsClockedIn(false);
-    const now = new Date();
-    setLastAction("Clocked out at " + now.toLocaleTimeString());
-    setClockInTime(null);
-    setWorkedTime("00:00:00");
+    setLastAction(`Clocked out at ${time}`);
+    setRecords((prev) =>
+      prev.map((r) =>
+        r.date === today
+          ? { ...r, out: time, total: Math.floor(Math.random() * 3 + 7) } // simulate total hours
+          : r
+      )
+    );
   };
 
-  const handleSubmitSignature = () => {
-    if (!signature.trim()) return alert("⚠️ Please sign before submitting!");
-    alert(`✅ Your attendance has been signed: "${signature}"`);
-    setSignature("");
-  };
+  const totalHours = records.reduce(
+    (acc, r) => acc + (r.total || 0),
+    0
+  );
+  const averageHours = records.length
+    ? (totalHours / records.length).toFixed(1)
+    : 0;
 
   return (
-    <div className="min-h-screen flex flex-col items-center bg-gradient-to-b from-blue-950 via-blue-900 to-indigo-900 text-white py-16 px-4">
-      {/* --- HEADER --- */}
+    <div className="min-h-screen bg-gradient-to-b from-blue-950 via-blue-900 to-indigo-900 text-white flex flex-col items-center py-12 px-6">
+      {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        className="text-center mb-12"
+        transition={{ duration: 0.5 }}
+        className="text-center mb-10"
       >
-        <h1 className="text-4xl font-extrabold mb-2 text-yellow-400">
-          Time Clock System
+        <h1 className="text-4xl font-extrabold flex items-center justify-center gap-3">
+          <Clock className="w-10 h-10 text-cyan-400" />
+          My Workday Summary
         </h1>
-        <p className="text-blue-200 text-sm">
-          Track your daily attendance and working hours in real-time.
+        <p className="text-blue-200 mt-1">
+          Track your working day, attendance, and time logs.
         </p>
       </motion.div>
 
-      {/* --- MAIN CARD --- */}
+      {/* User Info */}
       <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.4 }}
-        className="bg-[#0F2658] rounded-2xl shadow-lg p-8 w-full max-w-3xl flex flex-col items-center"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        className="bg-[#0F2658] rounded-2xl shadow-lg p-6 w-full max-w-5xl mb-10 flex flex-col md:flex-row justify-between items-center"
       >
-        <Clock className="w-16 h-16 text-cyan-400 mb-6 animate-pulse" />
+        <div className="flex items-center gap-4 mb-4 md:mb-0">
+          <div className="bg-slate-800 p-3 rounded-full border border-slate-600">
+            <User className="w-8 h-8 text-yellow-400" />
+          </div>
+          <div>
+            <h2 className="text-xl font-semibold">{userName}</h2>
+            <p className="text-sm text-blue-300">Software Engineer | Remote</p>
+          </div>
+        </div>
+        <div className="text-center">
+          <p className="text-blue-200 text-sm mb-1">Date</p>
+          <h3 className="font-bold text-lg text-cyan-400">{today}</h3>
+        </div>
+      </motion.div>
 
-        <h2 className="text-2xl font-bold mb-4 text-center">
-          {isClockedIn
-            ? "You are currently clocked in"
-            : "You are currently clocked out"}
-        </h2>
+      {/* Clock Controls */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        className="bg-[#0F2658] rounded-2xl shadow-lg p-8 w-full max-w-3xl text-center"
+      >
+        <div className="mb-8">
+          <h2 className="text-2xl font-bold mb-2">
+            {isClockedIn ? "You are clocked in!" : "You are clocked out."}
+          </h2>
+          <p className="text-blue-200 text-sm">
+            {lastAction || "Start your workday by clocking in."}
+          </p>
+        </div>
 
-        <p className="text-blue-200 text-sm mb-6 text-center">
-          {lastAction || "No record for today yet."}
-        </p>
-
-        {/* --- TIMER SECTION --- */}
-        {isClockedIn && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="flex items-center gap-3 bg-slate-800/60 border border-slate-700 px-5 py-3 rounded-xl mb-6"
-          >
-            <Timer className="text-cyan-400 w-5 h-5" />
-            <span className="text-cyan-300 font-semibold text-lg">
-              Working time: {workedTime}
-            </span>
-          </motion.div>
-        )}
-
-        {/* --- ACTION BUTTONS --- */}
-        <div className="flex gap-6 mb-8">
+        <div className="flex flex-wrap justify-center gap-6">
           <button
             onClick={handleClockIn}
             disabled={isClockedIn}
@@ -135,60 +130,69 @@ export default function ClockPage() {
             <LogOut className="w-5 h-5" /> Clock Out
           </button>
         </div>
-
-        {/* --- SIGNATURE SECTION --- */}
-        <div className="w-full bg-slate-800/60 p-5 rounded-xl border border-slate-700">
-          <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
-            <CheckCircle className="w-5 h-5 text-cyan-400" /> Digital Signature
-          </h3>
-          <p className="text-slate-300 text-sm mb-3">
-            Please sign your attendance for today before leaving.
-          </p>
-
-          <input
-            type="text"
-            placeholder="Type your name..."
-            value={signature}
-            onChange={(e) => setSignature(e.target.value)}
-            className="w-full px-4 py-2 rounded-lg bg-slate-900 border border-slate-700 text-white placeholder-slate-400 focus:ring-2 focus:ring-cyan-400"
-          />
-          <button
-            onClick={handleSubmitSignature}
-            className="mt-4 w-full py-2 bg-cyan-400 text-slate-900 font-semibold rounded-lg hover:bg-cyan-300 transition-all"
-          >
-            Sign Attendance
-          </button>
-        </div>
       </motion.div>
 
-      {/* --- STATUS MESSAGE --- */}
-      {lastAction && (
+      {/* Stats */}
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.2 }}
+        className="grid md:grid-cols-4 gap-6 mt-10 w-full max-w-5xl text-center"
+      >
+        {[
+          { label: "Total Hours", value: `${totalHours}h`, color: "text-cyan-400" },
+          { label: "Average", value: `${averageHours}h`, color: "text-cyan-400" },
+          { label: "Days Recorded", value: records.length, color: "text-green-400" },
+          { label: "Punctuality", value: "96%", color: "text-yellow-400" },
+        ].map((s, i) => (
+          <div
+            key={i}
+            className="bg-[#0F2658] rounded-xl py-4 shadow-md border border-slate-700 hover:border-cyan-400 transition"
+          >
+            <p className="text-sm text-slate-300">{s.label}</p>
+            <p className={`text-2xl font-bold ${s.color}`}>{s.value}</p>
+          </div>
+        ))}
+      </motion.div>
+
+      {/* History Table */}
+      {records.length > 0 && (
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mt-10 flex items-center gap-3 bg-slate-800/70 border border-slate-700 px-6 py-3 rounded-xl"
+          transition={{ delay: 0.3 }}
+          className="bg-[#0F2658] mt-12 rounded-2xl shadow-lg p-6 w-full max-w-5xl"
         >
-          {isClockedIn ? (
-            <CheckCircle className="text-emerald-400" />
-          ) : (
-            <AlertTriangle className="text-yellow-400" />
-          )}
-          <span className="text-slate-200 text-sm">{lastAction}</span>
+          <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
+            <BarChart2 className="w-5 h-5 text-cyan-400" /> Attendance History
+          </h3>
+          <table className="w-full text-sm border-collapse text-left">
+            <thead>
+              <tr className="text-slate-300 border-b border-slate-700">
+                <th className="py-2">Date</th>
+                <th className="py-2">Clock In</th>
+                <th className="py-2">Clock Out</th>
+                <th className="py-2">Total Hours</th>
+              </tr>
+            </thead>
+            <tbody>
+              {records.map((r, i) => (
+                <tr
+                  key={i}
+                  className="border-b border-slate-800 hover:bg-slate-800/40 transition"
+                >
+                  <td className="py-2">{r.date}</td>
+                  <td className="py-2 text-emerald-400">{r.in || "-"}</td>
+                  <td className="py-2 text-red-400">{r.out || "-"}</td>
+                  <td className="py-2 text-cyan-400">
+                    {r.total ? `${r.total}h` : "-"}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </motion.div>
       )}
-
-      {/* --- FOOTER --- */}
-      <div className="mt-16 text-center text-sm text-blue-300 flex flex-col items-center">
-        <CalendarDays className="w-5 h-5 mb-2" />
-        <p>
-          {new Date().toLocaleDateString("en-GB", {
-            weekday: "long",
-            year: "numeric",
-            month: "long",
-            day: "numeric",
-          })}
-        </p>
-      </div>
     </div>
   );
 }
