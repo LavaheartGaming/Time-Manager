@@ -29,21 +29,23 @@ export default function RootLayout({
   }, []);
 
   const navigation = [
-    { name: "Accueil", href: "/home" },
+    { name: "Home", href: "/home" },
     { name: "Dashboard", href: "/dashboard" },
-    { name: "Mes tâches", href: "/tasks" },
-    { name: "Mon compte", href: "/account" },
+    { name: "Clock", href: "/clock" },
+    { name: "My Account", href: "/account" },
   ];
 
   return (
-    <html lang="fr">
+    <html lang="en">
       <body className="min-h-screen flex flex-col bg-gradient-to-b from-blue-950 via-blue-900 to-indigo-900 text-white">
+        {/* --- NAVBAR --- */}
         <nav className="sticky top-0 z-50 w-full bg-blue-950/95 backdrop-blur-md border-b border-blue-800 shadow-lg">
           <div className="max-w-7xl mx-auto flex justify-between items-center h-16 px-6">
+            {/* LOGO */}
             <div className="flex items-center gap-3">
               <Image
                 src="https://cdn-icons-png.flaticon.com/512/2103/2103691.png"
-                alt="Logo Time Manager"
+                alt="Time Manager Logo"
                 width={40}
                 height={40}
                 className="rounded-md"
@@ -56,6 +58,7 @@ export default function RootLayout({
               </Link>
             </div>
 
+            {/* --- NAV LINKS DESKTOP --- */}
             <div className="hidden md:flex items-center gap-8">
               {navigation.map((item) => (
                 <Link
@@ -71,14 +74,15 @@ export default function RootLayout({
                 </Link>
               ))}
 
+              {/* PROFILE BUTTON */}
               <Link
-                href={isLoggedIn ? "/profile" : "/login"}
+                href={isLoggedIn ? "/account" : "/login"}
                 className="flex items-center justify-center h-10 w-10 rounded-full overflow-hidden bg-yellow-400 hover:bg-yellow-300 transition-all transform hover:scale-110 border border-white/20 shadow-md"
               >
                 {profilePicUrl ? (
                   <Image
                     src={profilePicUrl}
-                    alt="Profil"
+                    alt="Profile"
                     width={40}
                     height={40}
                     className="object-cover rounded-full"
@@ -89,6 +93,7 @@ export default function RootLayout({
               </Link>
             </div>
 
+            {/* --- MOBILE MENU TOGGLE --- */}
             <div className="md:hidden">
               <button
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -99,6 +104,7 @@ export default function RootLayout({
             </div>
           </div>
 
+          {/* --- MOBILE MENU --- */}
           {isMenuOpen && (
             <div className="md:hidden bg-blue-950/95 border-t border-blue-800 p-4">
               {navigation.map((item) => (
@@ -118,28 +124,30 @@ export default function RootLayout({
 
               <div className="mt-4 border-t border-blue-800 pt-3">
                 <Link
-                  href={isLoggedIn ? "/profile" : "/login"}
+                  href={isLoggedIn ? "/account" : "/login"}
                   className="block w-full bg-yellow-400 text-gray-900 text-center font-semibold py-2 rounded-lg hover:bg-yellow-300 transition-all"
                   onClick={() => setIsMenuOpen(false)}
                 >
-                  {isLoggedIn ? "Mon compte" : "Se connecter"}
+                  {isLoggedIn ? "My Account" : "Sign In"}
                 </Link>
               </div>
             </div>
           )}
         </nav>
 
+        {/* --- PAGE CONTENT --- */}
         <main className="flex-grow">{children}</main>
 
+        {/* --- FOOTER --- */}
         <footer className="bg-blue-950 border-t border-blue-800 text-center text-sm py-4 mt-10">
           <p className="text-blue-200">
-            © 2025 Time Manager | Projet Étudiant Epitech |
-            <Link href="/mentions-legales" className="text-yellow-400 hover:underline mx-1">
-              Mentions légales
+            © 2025 Time Manager | Epitech Student Project |
+            <Link href="/legal" className="text-yellow-400 hover:underline mx-1">
+              Legal Notice
             </Link>
             |
-            <Link href="/confidentialite" className="text-yellow-400 hover:underline mx-1">
-              Politique de confidentialité
+            <Link href="/privacy" className="text-yellow-400 hover:underline mx-1">
+              Privacy Policy
             </Link>
           </p>
         </footer>
