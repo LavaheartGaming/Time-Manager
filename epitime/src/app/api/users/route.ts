@@ -1,14 +1,10 @@
-import type { NextApiRequest, NextApiResponse } from 'next'
+import { NextRequest, NextResponse } from 'next/server'
 
-type ResponseData = {
-    id: number;
-  name: string;
-  phone_number: number;
-  email: string
-}
-export default function handler(
-  req: NextApiRequest,
-  res: NextApiResponse<ResponseData>
-) {
-  res.status(200).json({ id: 1, name: 'John Doe', phone_number: 1234567890, email: 'foo@bar.com'})
+export async function GET(req: NextRequest) {
+  return NextResponse.json({
+    id: 1,
+    name: 'John Doe',
+    phone_number: 1234567890,
+    email: 'foo@bar.com'
+  })
 }
