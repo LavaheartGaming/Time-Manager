@@ -1,14 +1,46 @@
 "use client";
 
-import { useState } from "react";
-import { ChevronDown, ChevronUp, Pencil, Lock, Trash2, Bell, Settings } from "lucide-react";
+import { useState, useEffect } from "react";
+import {
+  ChevronDown,
+  ChevronUp,
+  Pencil,
+  Lock,
+  Trash2,
+  Bell,
+  Settings,
+  Shield,
+} from "lucide-react";
 
 export default function AccountPage() {
   const [openSection, setOpenSection] = useState<string | null>("profile");
+  const [user, setUser] = useState<{ name: string; role: string }>({
+    name: "Guest",
+    role: "user", // default role
+  });
+
+  // Simulate user authentication (to be replaced with Prisma later)
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    } else {
+      // Default demo user
+      setUser({ name: "Luca", role: "user" });
+    }
+  }, []);
 
   const toggleSection = (section: string) => {
     setOpenSection(openSection === section ? null : section);
   };
+
+  // Role-based introduction message
+  const roleMessage =
+    user.role === "admin"
+      ? "You have administrative rights. You can manage all users, teams, and configurations."
+      : user.role === "manager"
+      ? "You manage a team. Track attendance, manage tasks, and oversee performance."
+      : "You can track your hours, view tasks, and manage your personal preferences.";
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-950 via-blue-900 to-indigo-900 text-white py-16 px-6 flex flex-col items-center">
@@ -16,83 +48,102 @@ export default function AccountPage() {
       <div className="text-center mb-12">
         <img
           src="https://cdn-icons-png.flaticon.com/512/2103/2103691.png"
-          alt="Time Manager Logo"
+          alt="Epitime Logo"
           className="w-24 h-24 mx-auto mb-4 rounded-full shadow-lg"
         />
-        <h1 className="text-3xl font-bold text-yellow-400 mb-2">Bonjour, scawward 👋</h1>
-        <p className="text-white/70">Gérez vos informations et préférences de compte.</p>
+        <h1 className="text-3xl font-bold text-yellow-400 mb-2">
+          Hello, {user.name} 👋
+        </h1>
+        <p className="text-white/70">{roleMessage}</p>
       </div>
 
-      {/* Container */}
+      {/* Content */}
       <div className="w-full max-w-3xl flex flex-col gap-4">
-        {/* SECTION 1 - Profil */}
+        {/* Account management */}
         <AccountSection
-          title="Gérer votre compte"
+          title="Account Management"
           icon={<Settings className="text-yellow-400" />}
           isOpen={openSection === "profile"}
           onToggle={() => toggleSection("profile")}
         >
           <ul className="space-y-3">
             <li className="flex items-center gap-2 hover:text-yellow-300 cursor-pointer transition-colors">
-              <Pencil size={16} /> Modifier mes informations
+              <Pencil size={16} /> Edit profile information
             </li>
             <li className="flex items-center gap-2 hover:text-yellow-300 cursor-pointer transition-colors">
-              <Lock size={16} /> Changer mon mot de passe
+              <Lock size={16} /> Change password
             </li>
             <li className="flex items-center gap-2 hover:text-red-400 cursor-pointer transition-colors">
-              <Trash2 size={16} /> Supprimer mon compte
+              <Trash2 size={16} /> Delete account
             </li>
           </ul>
         </AccountSection>
 
-        {/* SECTION 2 - Sorties enregistrées */}
-        <AccountSection
-          title="Mes tâches sauvegardées"
-          icon={<Bell className="text-yellow-400" />}
-          isOpen={openSection === "tasks"}
-          onToggle={() => toggleSection("tasks")}
-        >
-          <p className="text-white/80 text-sm">
-            Vous n’avez pas encore de tâches enregistrées.
-          </p>
-        </AccountSection>
+        {/* Role-specific section */}
+        {user.role === "manager" && (
+          <AccountSection
+            title="Team Management"
+            icon={<Bell className="text-yellow-400" />}
+            isOpen={openSection === "team"}
+            onToggle={() => toggleSection("team")}
+          >
+            <p className="text-white/80 text-sm">
+              Manage your team members, review attendance, and monitor KPIs.
+            </p>
+          </AccountSection>
+        )}
 
-        {/* SECTION 3 - Préférences */}
+        {user.role === "admin" && (
+          <AccountSection
+            title="System Administration"
+            icon={<Shield className="text-yellow-400" />}
+            isOpen={openSection === "admin"}
+            onToggle={() => toggleSection("admin")}
+          >
+            <p className="text-white/80 text-sm">
+              Access full administrative controls including user management,
+              database monitoring, and configuration settings.
+            </p>
+          </AccountSection>
+        )}
+
+        {/* Preferences */}
         <AccountSection
-          title="Préférences et notifications"
-          icon={<Settings className="text-yellow-400" />}
+          title="Preferences & Notifications"
+          icon={<Bell className="text-yellow-400" />}
           isOpen={openSection === "prefs"}
           onToggle={() => toggleSection("prefs")}
         >
           <ul className="space-y-3">
             <li>
               <label className="flex items-center gap-3">
-                <input type="checkbox" className="accent-yellow-400" /> 
-                Recevoir un rappel quotidien de mes tâches
+                <input type="checkbox" className="accent-yellow-400" />
+                Receive daily task reminders
               </label>
             </li>
             <li>
               <label className="flex items-center gap-3">
-                <input type="checkbox" className="accent-yellow-400" /> 
-                Activer le mode sombre (automatique)
+                <input type="checkbox" className="accent-yellow-400" />
+                Enable automatic dark mode
               </label>
             </li>
           </ul>
         </AccountSection>
 
-        {/* SECTION 4 - Sécurité */}
+        {/* Security */}
         <AccountSection
-          title="Sécurité et confidentialité"
+          title="Security & Privacy"
           icon={<Lock className="text-yellow-400" />}
           isOpen={openSection === "security"}
           onToggle={() => toggleSection("security")}
         >
           <p className="text-white/80 text-sm">
-            Votre compte est sécurisé par une authentification standard.  
-            <br />Pour plus de sécurité, activez la double vérification.
+            Your account is protected with standard authentication.
+            <br />
+            For better protection, enable Two-Factor Authentication (2FA).
           </p>
           <button className="mt-3 bg-yellow-400 text-gray-900 px-4 py-2 rounded-lg hover:bg-yellow-300 font-semibold transition-all">
-            Activer la 2FA
+            Enable 2FA
           </button>
         </AccountSection>
       </div>
@@ -100,7 +151,7 @@ export default function AccountPage() {
   );
 }
 
-// --- Sous-composant réutilisable ---
+/* Reusable Section Component */
 function AccountSection({
   title,
   icon,
