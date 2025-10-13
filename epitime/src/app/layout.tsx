@@ -32,6 +32,7 @@ export default function RootLayout({
     { name: "Home", href: "/home" },
     { name: "Dashboard", href: "/dashboard" },
     { name: "Clock", href: "/clock" },
+    { name: "Chat", href: "/chat" }, // 👈 new Chat page
     { name: "My Account", href: "/account" },
   ];
 
@@ -45,7 +46,7 @@ export default function RootLayout({
             <div className="flex items-center gap-3">
               <Image
                 src="https://cdn-icons-png.flaticon.com/512/2103/2103691.png"
-                alt="Time Manager Logo"
+                alt="Epitime Logo"
                 width={40}
                 height={40}
                 className="rounded-md"
@@ -54,7 +55,7 @@ export default function RootLayout({
                 href="/home"
                 className="text-xl font-bold text-yellow-400 hover:text-yellow-300 transition-all"
               >
-                Time Manager
+                Epitime
               </Link>
             </div>
 
@@ -141,11 +142,11 @@ export default function RootLayout({
         {/* --- FOOTER --- */}
         <footer className="bg-blue-950 border-t border-blue-800 text-center text-sm py-4 mt-10">
           <p className="text-blue-200">
-            © 2025 Time Manager | Epitech Student Project |
+            © 2025 Epitime | Epitech Student Project |{" "}
             <Link href="/legal" className="text-yellow-400 hover:underline mx-1">
               Legal Notice
-            </Link>
-            |
+            </Link>{" "}
+            |{" "}
             <Link href="/privacy" className="text-yellow-400 hover:underline mx-1">
               Privacy Policy
             </Link>
