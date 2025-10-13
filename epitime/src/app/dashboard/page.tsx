@@ -1,5 +1,5 @@
 "use client"; // ✅ Obligatoire pour activer les hooks côté client (Next.js App Router)
-
+import { useRouter } from "next/navigation"; // ✅ Ajout pour la navigation entre pages
 import React, { useState } from "react";
 import {
   LineChart,
@@ -11,6 +11,7 @@ import {
   CartesianGrid,
 } from "recharts";
 import { motion, AnimatePresence } from "framer-motion";
+
 
 const teammates = [
   { id: 1, name: "Willy Wonka (Manager)", role: "Engineering Manager", status: "available" },
@@ -44,6 +45,7 @@ const mockDailyData = [
 ];
 
 export default function EpitimeDashboard() {
+  const router = useRouter();
   const [mode, setMode] = useState<"daily" | "weekly">("daily");
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [selectedMate, setSelectedMate] = useState<any>(null);
@@ -308,6 +310,16 @@ export default function EpitimeDashboard() {
                 </div>
               </div>
             </div>
+                          {/* --- START A CHAT BUTTON --- */}
+              <div className="p-6 border-t border-white/10 mt-6">
+                <div className="text-sm mb-3 text-slate-300">Start a chat</div>
+                <button
+                  onClick={() => router.push("/chat")} // 🔁 Change "/chat" si ton fichier est ailleurs
+                  className="w-full bg-cyan-400 hover:bg-cyan-300 text-slate-900 font-semibold py-2 rounded-xl transition-all"
+                >
+                  Go to Chat
+                </button>
+              </div>
           </motion.aside>
         )}
       </AnimatePresence>
