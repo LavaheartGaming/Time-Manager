@@ -19,5 +19,6 @@ model User {
   surname       String @db.VarChar(50)
   phone_number  BigInt
   status_id     Int
-  email         String @db.VarChar(50)
+  email         String @unique @db.VarChar(50)
+  password_hash String
 }
